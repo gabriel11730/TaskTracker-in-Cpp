@@ -1,0 +1,17 @@
+[
+    {
+        "id":"1",
+        "status":"in-progress",
+        "description":"Esto es una cita \"perfecta\".",
+        "createdAt":"19/03/2026",
+        "updatedAt":"21/03/2026"
+    },
+
+    {
+        "id":"2",
+        "description":"A short description",
+        "status":"todo, in-progress, done",
+        "createdAt":"The date and time when the task was created",
+        "updatedAt":"The date and time when the task was last updated"
+    }
+]
