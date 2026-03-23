@@ -6,13 +6,15 @@
 
 int main() {
     int opcion = 0;
+    // Deberia mapear el json a un vector de tareas al iniciar el programa?
+    InitialMappingJsontoVector();
     do
     {
         cout<< "#------Task tracker CLI------#"<<endl;
         cout<< "#----------------------------#"<<endl;
         cout<< "1. Add, Update or Delete Task" << endl;
         cout<< "2. Mark task as Complete" << endl;
-        cout<< "3. See all Tasks" << endl;
+        cout<< "3. See Tasks" << endl;
         cout<< "4. Exit"<< endl;
         cin>> opcion;
         if (opcion == 1)
@@ -21,7 +23,7 @@ int main() {
         }
         if (opcion == 2)
         {
-            // Funcion relacionada
+            MarkTaskComplete();
         }
         if (opcion == 3)
         {

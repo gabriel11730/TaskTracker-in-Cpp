@@ -1,0 +1,37 @@
+[
+  {
+    "id":"1",
+    "status":"in-progress",
+    "description":"Esto es una cita perfecta.",
+    "createdAt":"19/03/2026",
+    "updatedAt":"21/03/2026"
+  },
+  {
+    "id":"2",
+    "status":"todo",
+    "description":"A short description",
+    "createdAt":"07/02/2026",
+    "updatedAt":"08/03/2026"
+  },
+  {
+    "id":"3",
+    "status":"done",
+    "description":"A beatiful cli program",
+    "createdAt":"25/04/2025",
+    "updatedAt":"07/06/2025"
+  },
+  {
+    "id":"4",
+    "status":"todo",
+    "description":"Una tarea \"increible\".",
+    "createdAt":"22/3/2026",
+    "updatedAt":"22/3/2026"
+  },
+  {
+    "id":"5",
+    "status":"todo",
+    "description":"La verga el burro.",
+    "createdAt":"22/3/2026",
+    "updatedAt":"22/3/2026"
+  }
+]

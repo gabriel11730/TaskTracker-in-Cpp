@@ -2,6 +2,27 @@
 
 vector<Task> tasks;
 
+void InitialMappingJsontoVector(){
+    string jsonText;
+    ifstream archivo_tarea("tasks.json");
+    if (archivo_tarea.is_open())
+    {
+        while (getline(archivo_tarea, jsonText))
+        {
+            if (searchValue(jsonText))
+            {
+                addTaskToVector(GetTask());
+            }
+        }
+        
+        archivo_tarea.close();
+    }
+    else
+    {
+        cerr << "No se pudo abrir el archivo Json!." << endl;
+    }
+}
+
 void MenuManagetask(){
     int opcion;
     do
@@ -10,20 +31,22 @@ void MenuManagetask(){
     cout<<"1. Agregar tarea"<<endl;
     cout<<"2. Modificar tarea"<<endl;
     cout<<"3. Borrar tarea"<<endl;
+    cout<<"4. Volver al menu principal"<<endl;
     cin>>opcion;
     if (opcion == 1)
     {
         AddTask();
+        overwriteTasksinJson(tasks);
     }
-    if (opcion == 2)
+    else if (opcion == 2)
     {
         ModifyTask();
     }
-    if (opcion == 3)
+    else if (opcion == 3)
     {
         DeleteTask();
     }
-    if (opcion == 4)
+    else if (opcion == 4)
     {
         cout<< "Adios" << endl;
     }
@@ -34,9 +57,37 @@ void MenuManagetask(){
     } while (opcion != 4);
     
 }
-
+// Cual es la responsabilidad de AddTask?
+// 
 void AddTask(){
-    // Funcion relacionada
+    Task newTask;
+
+    if (tasks.empty())
+    {
+        newTask.id = "1";
+    }
+    else
+    {
+        Task lastTask = tasks.back();
+        int newLastId = stoi(lastTask.id) + 1;
+        newTask.id = to_string(newLastId);
+    }
+
+    string taskDescription;
+    cout << "Ingrese la descripcion de la tarea: " << endl;
+    cin.ignore();
+    getline(cin, taskDescription);
+    newTask.description = taskDescription;
+    newTask.status = "todo";
+    time_t t = time(nullptr);
+    tm* ahora = localtime(&t);
+    newTask.createdAt = 
+    to_string(ahora->tm_mday) +  "/" +
+    to_string(ahora->tm_mon + 1) + "/" + 
+    to_string(ahora->tm_year + 1900);
+    newTask.updatedAt = newTask.createdAt;
+
+    tasks.emplace_back(newTask);
 }
 
 void ModifyTask(){
@@ -49,6 +100,31 @@ void DeleteTask(){
 
 void MarkTaskComplete(){
     // Funcion relacionada
+    if (tasks.empty())
+    {
+        cout<< "No hay tareas para marcar como completas." << endl;
+    }
+    else
+    {
+        string id;
+        cout<< "Ingrese el ID de la tarea que desea marcar como completa: ";
+        cin>> id;
+        bool found = false;
+        for (auto& task : tasks)
+        {
+            if (task.id == id)
+            {
+                task.status = "done";
+                cout<< "Tarea marcada como completa." << endl;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            cout<< "No se encontró una tarea con ese ID." << endl;
+        }
+    }
 }
 
 void MenuSeeTasks(){
@@ -64,33 +140,44 @@ void MenuSeeTasks(){
     if (opcion == 1)
     {
         // Funcion relacionada
+        if (tasks.empty()) {
+            cout << "No hay tareas para mostrar." << endl;
+        } else {
+            cout << "Tareas completas:" << endl;
+            for (const auto& task : tasks) {
+                if (task.status == "done") {
+                    cout << "ID: " << task.id << endl;
+                    cout << "Description: " << task.description << endl;
+                    cout << "Created At: " << task.createdAt << endl;
+                    cout << "Updated At: " << task.updatedAt << endl;
+                    cout << "-----------------------------" << endl;
+                }
+            }
+        }
     }
     else if (opcion == 2)
     {
-        
         // Funcion relacionada
+        if (tasks.empty()) {
+            cout << "No hay tareas para mostrar." << endl;
+        } else {
+            cout << "Tareas incompletas:" << endl;
+            for (const auto& task : tasks) {
+                if (task.status != "done") {
+                    cout << "ID: " << task.id << endl;
+                    cout << "Description: " << task.description << endl;
+                    cout << "Created At: " << task.createdAt << endl;
+                    cout << "Updated At: " << task.updatedAt << endl;
+                    cout << "-----------------------------" << endl;
+                }
+            }
+        }
     }
     else if (opcion == 3)
     {
-        // Funcion relacionada
-        string jsonText;
-        ifstream archivo_tarea("..\\task\\task1.json");
-        if (archivo_tarea.is_open())
-        {
-            while (getline(archivo_tarea, jsonText))
-            {
-                searchValue(jsonText);
-                //cout << jsonText << endl;
-            }
-            // Puedo acceder a mi Struct MapOfTask desde aqui?
-
-            // esto cambiara por una funcion que pregunte si el MapOfTask ya esta lleno
-            addTaskToVector(GetTask());
-            archivo_tarea.close();
-        }
-    
+        printVector();
     }
-    else if (opcion == 4 )
+    else if (opcion == 4)
     {
         cout<< "Adios" << endl;
     }
@@ -98,10 +185,61 @@ void MenuSeeTasks(){
     {
         cout<< "Opcion no valida, intente de nuevo" << endl;
     }
+    //clearConsole();
     } while (opcion != 4);
     
 }
 
+// Funciones de debug, luego seran reemplazadas por funciones relacionadas
+
 void addTaskToVector(Task task){
     tasks.emplace_back(task);
 };
+
+void printVector(){
+    cout << "Tareas en el vector:" << endl;
+    cout << "-----------------------------" << endl;
+    for (const auto& task : tasks) {
+        cout << "ID: " << task.id << endl;
+        cout << "Status: " << task.status << endl;
+        cout << "Description: " << task.description << endl;
+        cout << "Created At: " << task.createdAt << endl;
+        cout << "Updated At: " << task.updatedAt << endl;
+        cout << "-----------------------------" << endl;
+    }
+}
+
+
+void overwriteTasksinJson(const std::vector<Task>& tasks) {
+    // Abrir el archivo en modo escritura (por defecto trunca/borra lo anterior)
+    ofstream archivo("tasks.json");
+
+    if (!archivo.is_open()) {
+        std::cerr << "Error al abrir el archivo." << std::endl;
+        return;
+    }
+
+    // Iniciar el arreglo JSON
+    archivo << "[\n";
+
+    // Recorrer todas las tareas en el vector
+    for (size_t i = 0; i < tasks.size(); ++i) {
+        archivo << "  {\n";
+        archivo << "    \"id\":\"" << tasks[i].id << "\",\n";
+        archivo << "    \"status\":\"" << tasks[i].status << "\",\n";
+        archivo << "    \"description\":\"" << tasks[i].description << "\",\n";
+        archivo << "    \"createdAt\":\"" << tasks[i].createdAt << "\",\n";
+        archivo << "    \"updatedAt\":\"" << tasks[i].updatedAt << "\"\n";
+        archivo << "  }";
+
+        if (i < tasks.size() - 1) {
+            archivo << ",\n";
+        } else {
+            archivo << "\n";
+        }
+    }
+
+    archivo << "]\n";
+    
+    archivo.close();
+}

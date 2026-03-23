@@ -12,6 +12,10 @@ Training how handle files .json in c++ through a TaskTracker
 
 - Algun metodo para llenar el vector una sola vez y poder consultarlo con confianza luego, sin sobreescribirlo si no es necesario.
 
+- Refactorizar Lexer: Una funcion debera recibir un string 
+
 ## Pensamientos
 
 puedo crear una funcion en ``ManageTask.cpp`` que pida el ``struct`` y de algun modo enviar el ``struct`` como argumento en una funcion desde ``Lexer.cpp`` hacia ``ManageTask.cpp``
+
+

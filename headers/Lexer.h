@@ -17,7 +17,7 @@ struct Task
 
 #endif // MI_ESTRUCTURA_H
 
-void searchValue(string cadena);
+bool searchValue(string cadena);
 string extractValue(string cadena, int posicion);
 
 Task GetTask();

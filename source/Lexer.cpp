@@ -2,14 +2,12 @@
 
 Task MapOfTask;
 
-// Debo crear una función que me permita clasificar cada propiedad en el struct Task
-
 string extractValue(string cadena, int posicion){
     string StringValue = "";
     int pos = posicion;
 
     while (pos < cadena.size())
-    {/*  */
+    {
         char letter = cadena[pos];
         if (letter == '"')
         {
@@ -57,17 +55,22 @@ string extractValue(string cadena, int posicion){
     return StringValue;
 }
 
-void searchValue(string cadena){
+bool searchValue(string cadena){
     int pos = 0;
     for (char letter : cadena)
     {
+        if (letter == '}')
+        {
+            return true;
+        }
         if (letter == '"'){
             pos++;
-            cout<< extractValue(cadena,pos) << endl;
-            return;
+            extractValue(cadena,pos);
+            return false;
         }
         pos++;
     }
+    return false;
 }
 
 Task GetTask(){

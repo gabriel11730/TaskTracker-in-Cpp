@@ -10,8 +10,17 @@
     {
         "id":"2",
         "description":"A short description",
-        "status":"todo, in-progress, done",
-        "createdAt":"The date and time when the task was created",
-        "updatedAt":"The date and time when the task was last updated"
+        "status":"todo",
+        "createdAt":"07/02/2026",
+        "updatedAt":"08/03/2026"
+    },
+
+    {
+        "id":"3",
+        "description":"A beatiful cli program",
+        "status":"done",
+        "createdAt":"25/04/2025",
+        "updatedAt":"07/06/2025"
     }
+
 ]
