@@ -19,8 +19,6 @@ void MenuSeeTasks();
 
 void overwriteTasksinJson(const vector<Task>& tasks);
 
-// Funciones de debug, luego seran reemplazadas por funciones relacionadas
-
 void addTaskToVector(Task task);
 
 void printVector();

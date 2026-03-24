@@ -1,6 +1,6 @@
 #include <headers/ManageTasks.h>
 
-vector<Task> tasks;
+vector<Task> tasks; // Vector Global, luego se usare mejores practicas
 
 void InitialMappingJsontoVector(){
     string jsonText;
@@ -91,7 +91,62 @@ void AddTask(){
 }
 
 void ModifyTask(){
-    // Funcion relacionada
+    string id;
+    cout<< "Ingrese ID de la tarea que desea modificar: "<< endl;
+    cin>> id;
+    if (tasks.empty())
+    {
+        cout<< "No hay tareas guardadas" << endl;
+    }
+    else
+    {
+        for (auto &task : tasks)
+        {
+            if (task.id == id)
+            {
+                int opcion;
+                cout<<"Que valor desea modificar?"<<endl;
+                cout<<"1. Descripcion"<<endl;
+                cout<<"2. Status"<<endl;
+                cout<<"3. Regresar, No modificar nada"<<endl;
+                cin>> opcion;
+                if (opcion == 1)
+                {
+                    string newDescription;
+                    cout<< "Ingrese la nueva descripcion: "<< endl;
+                    cin.ignore();
+                    getline(cin, newDescription);
+                    task.description = newDescription;
+                }
+                else if (opcion == 2)
+                {
+                    string newStatus;
+                    cout<< "Ingrese el nuevo status (todo, in-progress, done): "<< endl;
+                    cin>> newStatus;
+                    if (newStatus == "todo" || newStatus == "in-progress" || newStatus == "done")
+                    {
+                        task.status = newStatus;
+                    }
+                    else
+                    {
+                        cout<< "Status no valido, intente de nuevo" << endl;
+                    }
+                }
+                else if (opcion == 3)
+                {
+                    cout<< "No se modifico nada" << endl;
+                }
+                else
+                {
+                    cout<< "Opcion no valida, intente de nuevo" << endl;
+                }
+            }
+            else
+            {
+                cout<< "No se encontro una tarea con ese ID" << endl;
+            }
+        }
+    }
 }
 
 void DeleteTask(){
@@ -134,50 +189,27 @@ void MenuSeeTasks(){
     cout<<"Elige: "<<endl;
     cout<<"1. Ver tareas completas"<<endl;
     cout<<"2. Ver tareas incompletas"<<endl;
-    cout<<"3. Ver todas las tareas"<<endl;
-    cout<<"4. Volver al menu principal"<<endl;
+    cout<<"3. Ver tareas en progreso"<<endl;
+    cout<<"4. Ver todas las tareas"<<endl;
+    cout<<"5. Volver al menu principal"<<endl;
     cin>>opcion;
     if (opcion == 1)
     {
-        // Funcion relacionada
-        if (tasks.empty()) {
-            cout << "No hay tareas para mostrar." << endl;
-        } else {
-            cout << "Tareas completas:" << endl;
-            for (const auto& task : tasks) {
-                if (task.status == "done") {
-                    cout << "ID: " << task.id << endl;
-                    cout << "Description: " << task.description << endl;
-                    cout << "Created At: " << task.createdAt << endl;
-                    cout << "Updated At: " << task.updatedAt << endl;
-                    cout << "-----------------------------" << endl;
-                }
-            }
-        }
+        filterTasksByStatus("done");
     }
     else if (opcion == 2)
     {
-        // Funcion relacionada
-        if (tasks.empty()) {
-            cout << "No hay tareas para mostrar." << endl;
-        } else {
-            cout << "Tareas incompletas:" << endl;
-            for (const auto& task : tasks) {
-                if (task.status != "done") {
-                    cout << "ID: " << task.id << endl;
-                    cout << "Description: " << task.description << endl;
-                    cout << "Created At: " << task.createdAt << endl;
-                    cout << "Updated At: " << task.updatedAt << endl;
-                    cout << "-----------------------------" << endl;
-                }
-            }
-        }
+        filterTasksByStatus("todo");
     }
     else if (opcion == 3)
     {
-        printVector();
+        filterTasksByStatus("in-progress");
     }
     else if (opcion == 4)
+    {
+        printAllTaskInVector();
+    }
+    else if (opcion == 5)
     {
         cout<< "Adios" << endl;
     }
@@ -186,17 +218,29 @@ void MenuSeeTasks(){
         cout<< "Opcion no valida, intente de nuevo" << endl;
     }
     //clearConsole();
-    } while (opcion != 4);
+    } while (opcion != 5);
     
 }
 
-// Funciones de debug, luego seran reemplazadas por funciones relacionadas
+void filterTasksByStatus(const string& status)
+{
+    if (tasks.empty()) {
+        cout << "No hay tareas para mostrar." << endl;
+    } else {
+        cout << "Tareas "<< status << ":" << endl;
+        for (const auto& task : tasks) {
+            if (task.status == status) {
+                cout << "ID: " << task.id << endl;
+                cout << "Description: " << task.description << endl;
+                cout << "Created At: " << task.createdAt << endl;
+                cout << "Updated At: " << task.updatedAt << endl;
+                cout << "-----------------------------" << endl;
+            }
+        }
+    }
+}
 
-void addTaskToVector(Task task){
-    tasks.emplace_back(task);
-};
-
-void printVector(){
+void printAllTaskInVector(){
     cout << "Tareas en el vector:" << endl;
     cout << "-----------------------------" << endl;
     for (const auto& task : tasks) {
@@ -209,9 +253,11 @@ void printVector(){
     }
 }
 
+void addTaskToVector(Task task){
+    tasks.emplace_back(task);
+};
 
 void overwriteTasksinJson(const std::vector<Task>& tasks) {
-    // Abrir el archivo en modo escritura (por defecto trunca/borra lo anterior)
     ofstream archivo("tasks.json");
 
     if (!archivo.is_open()) {
@@ -219,10 +265,8 @@ void overwriteTasksinJson(const std::vector<Task>& tasks) {
         return;
     }
 
-    // Iniciar el arreglo JSON
     archivo << "[\n";
 
-    // Recorrer todas las tareas en el vector
     for (size_t i = 0; i < tasks.size(); ++i) {
         archivo << "  {\n";
         archivo << "    \"id\":\"" << tasks[i].id << "\",\n";
@@ -238,8 +282,6 @@ void overwriteTasksinJson(const std::vector<Task>& tasks) {
             archivo << "\n";
         }
     }
-
     archivo << "]\n";
-    
     archivo.close();
 }
