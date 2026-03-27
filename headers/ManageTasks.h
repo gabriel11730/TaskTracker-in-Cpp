@@ -6,14 +6,16 @@
 
 using namespace std;
 
+extern vector<Task> tasks; // Declaración externa del vector global
+
 void InitialMappingJsontoVector();
 
 void MenuManagetask();
-void AddTask();
-void ModifyTask();
-void DeleteTask();
+void AddTask(string description);
+void ModifyTask(string id, string newDescription);
+void DeleteTask(string id);
 
-void MarkTaskComplete();
+void UpdateStatus(string newStatus, string id);
 void RefreshUpdateAtField(int index);
 
 void MenuSeeTasks();

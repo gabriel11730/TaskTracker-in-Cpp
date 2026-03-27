@@ -1,0 +1,9 @@
+[
+  {
+    "id":"1",
+    "status":"todo",
+    "description":"Comprar lechugas",
+    "createdAt":"27/3/2026",
+    "updatedAt":"27/3/2026"
+  }
+]
