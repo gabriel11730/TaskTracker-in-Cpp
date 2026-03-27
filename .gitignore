@@ -1,0 +1,28 @@
+# Carpetas de salida de compilación
+build/
+
+# Configuración local de VS Code
+.vscode/
+
+# Archivos intermedios y binarios de Visual C++
+*.obj
+*.pdb
+*.exe
+*.ilk
+*.idb
+*.ipch
+*.aps
+*.iobj
+*.pch
+*.res
+*.lib
+
+# Archivos temporales del sistema
+*.tmp
+*.log
+
+# Archivos de proyecto generados
+*.vcxproj.user
+*.suo
+*.user
+*.ncb

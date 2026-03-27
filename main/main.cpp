@@ -1,10 +1,37 @@
 /* Task Tracker in Roadmap.sh */
-
+#include <main/task-tracker.h>
 #include <headers/Utilities.h>
 #include <headers/ManageTasks.h>
 
 
-int main() {
+int main(int argc, char* argv[]) {
+    
+    return TaskTracker::handle_command(argc, argv);
+}
+
+
+
+
+
+
+
+
+
+
+// //cout << "Welcome to Task Tracker!" << endl;
+// // Estoy practicando, antes de pasar a la logica del programa.
+
+// cout << "[" << argc << "]" << endl;
+
+// for (int i = 0; i < argc ; i++)
+// {
+//     cout << "Argument " << i << ": " << argv[i] << endl;
+// }
+
+
+
+
+/*
     int opcion = 0;
     // Deberia mapear el json a un vector de tareas al iniciar el programa?
     InitialMappingJsontoVector();
@@ -37,5 +64,4 @@ int main() {
 
     } while (opcion != 4);
     
-    return 0;
-}
+*/

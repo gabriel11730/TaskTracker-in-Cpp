@@ -36,7 +36,6 @@ void MenuManagetask(){
     if (opcion == 1)
     {
         AddTask();
-        overwriteTasksinJson(tasks);
     }
     else if (opcion == 2)
     {
@@ -54,6 +53,7 @@ void MenuManagetask(){
     {
         cout<< "Opcion no valida, intente de nuevo" << endl;
     }
+    overwriteTasksinJson(tasks);
     } while (opcion != 4);
     
 }
@@ -91,15 +91,15 @@ void AddTask(){
 }
 
 void ModifyTask(){
-    string id;
-    cout<< "Ingrese ID de la tarea que desea modificar: "<< endl;
-    cin>> id;
     if (tasks.empty())
     {
         cout<< "No hay tareas guardadas" << endl;
     }
     else
     {
+        string id;
+        cout<< "Ingrese ID de la tarea que desea modificar: "<< endl;
+        cin>> id;
         for (auto &task : tasks)
         {
             if (task.id == id)
@@ -117,6 +117,13 @@ void ModifyTask(){
                     cin.ignore();
                     getline(cin, newDescription);
                     task.description = newDescription;
+                    auto it = std::find_if(tasks.begin(), tasks.end(), [&](const Task& t) {
+                        return t.id == task.id; // Comparación personalizada "al vuelo"
+                    });
+
+                    if (it != tasks.end()) {
+                        RefreshUpdateAtField(std::distance(tasks.begin(), it));
+                    }
                 }
                 else if (opcion == 2)
                 {
@@ -126,6 +133,13 @@ void ModifyTask(){
                     if (newStatus == "todo" || newStatus == "in-progress" || newStatus == "done")
                     {
                         task.status = newStatus;
+                        auto it = std::find_if(tasks.begin(), tasks.end(), [&](const Task& t) {
+                            return t.id == task.id;
+                        });
+                        if (it != tasks.end()) 
+                        {
+                            RefreshUpdateAtField(std::distance(tasks.begin(), it));
+                        }
                     }
                     else
                     {
@@ -141,20 +155,36 @@ void ModifyTask(){
                     cout<< "Opcion no valida, intente de nuevo" << endl;
                 }
             }
-            else
-            {
-                cout<< "No se encontro una tarea con ese ID" << endl;
-            }
         }
     }
 }
 
 void DeleteTask(){
-    // Funcion relacionada
+    if (tasks.empty())
+    {
+        cout<< "No hay tareas para eliminar." << endl;
+    }
+    else
+    {
+        string id;
+        cout<< "Ingrese el ID de la tarea que desea eliminar: ";
+        cin>> id;
+        auto it = remove_if(tasks.begin(), tasks.end(), [&id](const Task& task) {
+            return task.id == id;
+        });
+        if (it != tasks.end())
+        {
+            tasks.erase(it, tasks.end());
+            cout<< "Tarea eliminada." << endl;
+        }
+        else
+        {
+            cout<< "No se encontró una tarea con ese ID." << endl;
+        }
+    }
 }
 
 void MarkTaskComplete(){
-    // Funcion relacionada
     if (tasks.empty())
     {
         cout<< "No hay tareas para marcar como completas." << endl;
@@ -179,6 +209,23 @@ void MarkTaskComplete(){
         {
             cout<< "No se encontró una tarea con ese ID." << endl;
         }
+    }
+}
+
+void RefreshUpdateAtField(int index)
+{
+    time_t t = time(nullptr);
+    tm* ahora = localtime(&t);
+    if (index >= 0 && index < tasks.size())
+    {
+        tasks[index].updatedAt = 
+        to_string(ahora->tm_mday) +  "/" +
+        to_string(ahora->tm_mon + 1) + "/" + 
+        to_string(ahora->tm_year + 1900);
+    }
+    else
+    {
+        cout<< "Indice invalido" << endl;
     }
 }
 

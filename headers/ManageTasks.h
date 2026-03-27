@@ -14,11 +14,14 @@ void ModifyTask();
 void DeleteTask();
 
 void MarkTaskComplete();
+void RefreshUpdateAtField(int index);
 
 void MenuSeeTasks();
+
+void filterTasksByStatus(const string& status);
 
 void overwriteTasksinJson(const vector<Task>& tasks);
 
 void addTaskToVector(Task task);
 
-void printVector();
+void printAllTaskInVector();

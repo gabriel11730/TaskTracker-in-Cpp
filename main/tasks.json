@@ -8,22 +8,15 @@
   },
   {
     "id":"2",
-    "status":"todo",
+    "status":"done",
     "description":"A short description",
     "createdAt":"07/02/2026",
-    "updatedAt":"08/03/2026"
-  },
-  {
-    "id":"3",
-    "status":"done",
-    "description":"A beatiful cli program",
-    "createdAt":"25/04/2025",
-    "updatedAt":"07/06/2025"
+    "updatedAt":"25/3/2026"
   },
   {
     "id":"4",
     "status":"todo",
-    "description":"Una tarea \"increible\".",
+    "description":"Una tarea increible.",
     "createdAt":"22/3/2026",
     "updatedAt":"22/3/2026"
   },
@@ -33,5 +26,12 @@
     "description":"La verga el burro.",
     "createdAt":"22/3/2026",
     "updatedAt":"22/3/2026"
+  },
+  {
+    "id":"6",
+    "status":"todo",
+    "description":"Ir de compras",
+    "createdAt":"25/3/2026",
+    "updatedAt":"25/3/2026"
   }
 ]
