@@ -6,24 +6,15 @@
 
 using namespace std;
 
-extern vector<Task> tasks; // Declaración externa del vector global
+void InitialMappingJsontoVector(vector<Task>& tasks);
 
-void InitialMappingJsontoVector();
+void AddTask(vector<Task>& tasks, const string& description);
+void UpdateDescription(vector<Task>& tasks, const string& id, const string& newDescription);
+void DeleteTask(vector<Task>& tasks, const string& id);
+void UpdateStatus(vector<Task>& tasks, const string& newStatus, const string& id);
+void RefreshUpdateAtField(vector<Task>& tasks, int index);
 
-void MenuManagetask();
-void AddTask(string description);
-void ModifyTask(string id, string newDescription);
-void DeleteTask(string id);
-
-void UpdateStatus(string newStatus, string id);
-void RefreshUpdateAtField(int index);
-
-void MenuSeeTasks();
-
-void filterTasksByStatus(const string& status);
-
+void filterTasksByStatus(const vector<Task>& tasks, const string& status);
 void overwriteTasksinJson(const vector<Task>& tasks);
 
-void addTaskToVector(Task task);
-
-void printAllTaskInVector();
+void printAllTaskInVector(const vector<Task>& tasks);

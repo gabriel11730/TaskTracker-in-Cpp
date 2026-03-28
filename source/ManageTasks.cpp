@@ -1,8 +1,6 @@
 #include <headers/ManageTasks.h>
 
-vector<Task> tasks; // Vector Global, luego se usare mejores practicas
-
-void InitialMappingJsontoVector(){
+void InitialMappingJsontoVector(vector<Task>& tasks){
     string jsonText;
     ifstream archivo_tarea("tasks.json");
     if (archivo_tarea.is_open())
@@ -11,7 +9,7 @@ void InitialMappingJsontoVector(){
         {
             if (searchValue(jsonText))
             {
-                addTaskToVector(GetTask());
+                tasks.emplace_back(GetTask());
             }
         }
         
@@ -19,46 +17,12 @@ void InitialMappingJsontoVector(){
     }
     else
     {
-        cerr << "No se pudo abrir el archivo Json!." << endl;
+        cerr << "Task.json was not found, a new file will be created!" << endl;
     }
 }
 
-// void MenuManagetask(){
-//     int opcion;
-//     do
-//     {
-//     cout<<"Elige: "<<endl;
-//     cout<<"1. Agregar tarea"<<endl;
-//     cout<<"2. Modificar tarea"<<endl;
-//     cout<<"3. Borrar tarea"<<endl;
-//     cout<<"4. Volver al menu principal"<<endl;
-//     cin>>opcion;
-//     if (opcion == 1)
-//     {
-//         AddTask();
-//     }
-//     else if (opcion == 2)
-//     {
-//         ModifyTask();
-//     }
-//     else if (opcion == 3)
-//     {
-//         DeleteTask();
-//     }
-//     else if (opcion == 4)
-//     {
-//         cout<< "Adios" << endl;
-//     }
-//     else
-//     {
-//         cout<< "Opcion no valida, intente de nuevo" << endl;
-//     }
-//     overwriteTasksinJson(tasks);
-//     } while (opcion != 4); 
-// }
 
-
-void AddTask(string description){
+void AddTask(vector<Task>& tasks, const string& description){
     Task newTask;
 
     if (tasks.empty())
@@ -67,7 +31,7 @@ void AddTask(string description){
     }
     else
     {
-        Task lastTask = tasks.back();
+        const Task& lastTask = tasks.back();
         int newLastId = stoi(lastTask.id) + 1;
         newTask.id = to_string(newLastId);
     }
@@ -85,78 +49,83 @@ void AddTask(string description){
     cout<< "Task added successfully (ID: " << newTask.id << ")" << endl;
 }
 
-void UpdateDescription(string id, string newDescription){
+void UpdateDescription(vector<Task>& tasks, const string& id, const string& newDescription){
     if (tasks.empty())
     {
-        cout<< "No hay tareas guardadas" << endl;
+        cout<< "There are no saved task" << endl;
         return;
     }
+
     bool found = false;
-    for (auto& task : tasks)
+    for (size_t i = 0; i < tasks.size(); ++i)
     {
-        task.description = newDescription;
-        auto it = std::find_if(tasks.begin(), tasks.end(), [&](const Task& t) {
-            return t.id == task.id;
-        });
-
-        if (it != tasks.end()) {
-            RefreshUpdateAtField(std::distance(tasks.begin(), it));
+        if (tasks[i].id == id)
+        {
+            tasks[i].description = newDescription;
+            RefreshUpdateAtField(tasks, static_cast<int>(i));
+            found = true;
+            break;
         }
+    }
+
+    if (!found)
+    {
+        cout<< "No task was found with that ID" << endl;
     }
 }
 
-void DeleteTask(string id){
+void DeleteTask(vector<Task>& tasks, const string& id){
     if (tasks.empty())
     {
-        cout<< "No hay tareas para eliminar." << endl;
+        cout<< "There are no tasks to delete." << endl;
+        return;
+    }
+
+    auto it = remove_if(tasks.begin(), tasks.end(), [&id](const Task& task) {
+        return task.id == id;
+    });
+
+    if (it != tasks.end())
+    {
+        tasks.erase(it, tasks.end());
+        cout<< "Task deleted" << endl;
     }
     else
     {
-        auto it = remove_if(tasks.begin(), tasks.end(), [&id](const Task& task) {
-            return task.id == id;
-        });
-        if (it != tasks.end())
-        {
-            tasks.erase(it, tasks.end());
-            cout<< "Tarea eliminada." << endl;
-        }
-        else
-        {
-            cout<< "No se encontró una tarea con ese ID." << endl;
-        }
+        cout<< "No task was found with that ID." << endl;
     }
 }
 
-void UpdateStatus(string newStatus, string id){
+void UpdateStatus(vector<Task>& tasks, const string& newStatus, const string& id){
     if (tasks.empty())
     {
-        cout<< "No hay tareas para marcar como completas." << endl;
+        cout<< "There are no saved task" << endl;
+        return;
     }
-    else
+
+    bool found = false;
+    for (size_t i = 0; i < tasks.size(); ++i)
     {
-        bool found = false;
-        for (auto& task : tasks)
+        if (tasks[i].id == id)
         {
-            if (task.id == id)
-            {
-                task.status = newStatus;
-                cout<< "Status Update" << endl;
-                found = true;
-                break;
-            }
+            tasks[i].status = newStatus;
+            RefreshUpdateAtField(tasks, static_cast<int>(i));
+            found = true;
+            break;
         }
-        if (!found)
-        {
-            cout<< "No se encontró una tarea con ese ID." << endl;
-        }
+    }
+
+    if (!found)
+    {
+        cout<< "No task was found with that ID." << endl;
     }
 }
 
-void RefreshUpdateAtField(int index)
+void RefreshUpdateAtField(vector<Task>& tasks, int index)
 {
     time_t t = time(nullptr);
     tm* ahora = localtime(&t);
-    if (index >= 0 && index < tasks.size())
+    if (index >= 0 && index < static_cast<int>(tasks.size()))
     {
         tasks[index].updatedAt = 
         to_string(ahora->tm_mday) +  "/" +
@@ -165,56 +134,16 @@ void RefreshUpdateAtField(int index)
     }
     else
     {
-        cout<< "Indice invalido" << endl;
+        cout<< "Invalid Index" << endl;
     }
 }
 
-void MenuSeeTasks(){
-    int opcion;
-    do
-    {
-        cout<<"Elige: "<<endl;
-    cout<<"1. Ver tareas completas"<<endl;
-    cout<<"2. Ver tareas incompletas"<<endl;
-    cout<<"3. Ver tareas en progreso"<<endl;
-    cout<<"4. Ver todas las tareas"<<endl;
-    cout<<"5. Volver al menu principal"<<endl;
-    cin>>opcion;
-    if (opcion == 1)
-    {
-        filterTasksByStatus("done");
-    }
-    else if (opcion == 2)
-    {
-        filterTasksByStatus("todo");
-    }
-    else if (opcion == 3)
-    {
-        filterTasksByStatus("in-progress");
-    }
-    else if (opcion == 4)
-    {
-        printAllTaskInVector();
-    }
-    else if (opcion == 5)
-    {
-        cout<< "Adios" << endl;
-    }
-    else
-    {
-        cout<< "Opcion no valida, intente de nuevo" << endl;
-    }
-    //clearConsole();
-    } while (opcion != 5);
-    
-}
-
-void filterTasksByStatus(const string& status)
+void filterTasksByStatus(const vector<Task>& tasks, const string& status)
 {
     if (tasks.empty()) {
-        cout << "No hay tareas para mostrar." << endl;
+        cout << "There are no task to show." << endl;
     } else {
-        cout << "Tareas "<< status << ":" << endl;
+        cout << "Tasks "<< status << ":" << endl;
         for (const auto& task : tasks) {
             if (task.status == status) {
                 cout << "ID: " << task.id << endl;
@@ -227,8 +156,8 @@ void filterTasksByStatus(const string& status)
     }
 }
 
-void printAllTaskInVector(){
-    cout << "Tareas en el vector:" << endl;
+void printAllTaskInVector(const vector<Task>& tasks){
+    cout << " Saved Task:" << endl;
     cout << "-----------------------------" << endl;
     for (const auto& task : tasks) {
         cout << "ID: " << task.id << endl;
@@ -240,15 +169,12 @@ void printAllTaskInVector(){
     }
 }
 
-void addTaskToVector(Task task){
-    tasks.emplace_back(task);
-};
 
 void overwriteTasksinJson(const std::vector<Task>& tasks) {
     ofstream archivo("tasks.json");
 
     if (!archivo.is_open()) {
-        std::cerr << "Error al abrir el archivo." << std::endl;
+        std::cerr << "Error opening file." << std::endl;
         return;
     }
 
@@ -272,26 +198,3 @@ void overwriteTasksinJson(const std::vector<Task>& tasks) {
     archivo << "]\n";
     archivo.close();
 }
-
-
-        // else if (opcion == 2)
-        // {
-        //     string newStatus;
-        //     cout<< "Ingrese el nuevo status (todo, in-progress, done): "<< endl;
-        //     cin>> newStatus;
-        //     if (newStatus == "todo" || newStatus == "in-progress" || newStatus == "done")
-        //     {
-        //         task.status = newStatus;
-        //         auto it = std::find_if(tasks.begin(), tasks.end(), [&](const Task& t) {
-        //             return t.id == task.id;
-        //         });
-        //         if (it != tasks.end()) 
-        //         {
-        //             RefreshUpdateAtField(std::distance(tasks.begin(), it));
-        //         }
-        //     }
-        //     else
-        //     {
-        //         cout<< "Status no valido, intente de nuevo" << endl;
-        //     }
-        // }
